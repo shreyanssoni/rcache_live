@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="rcache_live",
-    version="0.1.0",
+    version="0.1.1",
     description="A simple and efficient Redis caching library with Active TTL support",
     author="Your Name",
     author_email="your_email@example.com",

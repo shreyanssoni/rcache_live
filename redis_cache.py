@@ -19,6 +19,14 @@ class RedisCache:
         self.default_ttl = default_ttl
         self.active_ttl = active_ttl  # Store the flag
 
+    def __setitem__(self, key, value):
+        """Set a record using dictionary-style access."""
+        self.set_record(key, value)
+
+    def __getitem__(self, key):
+        """Get a record using dictionary-style access."""
+        return self.get_record(key)
+
     def set_record(self, key, value, ttl=None):
         """Set a record and track last_access separately."""
         ttl = ttl or self.default_ttl
@@ -34,21 +42,12 @@ class RedisCache:
             self.client.expire(key, self.default_ttl)  # Reset TTL
         return deserialize(value) if value else None
 
-    def update_record(self, key, new_value):
-        """Update an entire record, resetting TTL and last_access timestamp if active_ttl is enabled."""
-        if self.client.exists(key):
-            self.set_record(key, new_value)
-            return True
-        return False
-
-    def update_record_field(self, key, field, value):
-        """Update a single field in a JSON record, resetting TTL if active_ttl is enabled."""
-        record = self.get_record(key)
-        if record:
-            record[field] = value
-            self.set_record(key, record)
-            return True
-        return False
+    def update(self, key, **kwargs):
+        """Update specific fields of a record instead of replacing the entire record."""
+        record = self.get_record(key) or {}
+        record.update(kwargs)
+        self.set_record(key, record)
+        return True
 
     def delete_record(self, key):
         """Delete a record and remove it from the active TTL tracker."""
@@ -62,23 +61,22 @@ class RedisCache:
         return {key: self.get_record(key) for key in keys}
 
     def cleanup_inactive_records(self, past_minutes=60):
-        """Background job: Delete records that haven’t been accessed in past X minutes."""
+        """Background job: Delete records that haven't been accessed in past X minutes."""
         now = current_timestamp()
         min_time = now - (past_minutes * 60)
         keys = self.client.hgetall("active_ttl_tracker")  # Get all tracked access times
+
         for key, last_access in keys.items():
-            if int(last_access) < min_time:
+            last_access_time = int(last_access)
+            if last_access_time < min_time:
+                print(f"Deleting {key} due to inactivity")
                 self.client.delete(key)  # Delete stale record
                 self.client.hdel("active_ttl_tracker", key)  # Remove from tracking
 
-    def bulk_set(self, records):
-        """Set multiple records at once."""
-        with self.client.pipeline() as pipe:
-            for key, value in records.items():
-                pipe.setex(key, self.default_ttl, serialize(value))
-                if self.active_ttl:
-                    pipe.hset("active_ttl_tracker", key, current_timestamp())
-            pipe.execute()
+    def add(self, **kwargs):
+        """Set multiple records at once using keyword arguments."""
+        for key, value in kwargs.items():
+            self.set_record(key, value)
 
     def bulk_delete(self, keys):
         """Delete multiple records at once and remove from active TTL tracking."""

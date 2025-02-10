@@ -5,3 +5,8 @@ __pycache__/
 
 venv
 venv/
+
+# Ignore build artifacts
+*.egg-info/
+dist/
+build/
