@@ -108,6 +108,13 @@ Lazy cleanup ensures that expired or inactive records are removed in an efficien
 cache.cleanup_inactive_records(past_minutes=0.1)
 ```
 
+### Checking Cache Stats - New!
+
+```python
+# Run the command in CLI
+rcache-live-stats
+```
+
 ### Sample Run to see usage
 To test the functionality of `rcache-live`, use the `run_sample.py` file:
 
