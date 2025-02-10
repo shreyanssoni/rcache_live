@@ -131,6 +131,66 @@ export REDIS_DEFAULT_TTL=3600
 export REDIS_ACTIVE_TTL=true
 ```
 
+## Developer Guide
+### Setting Up for Development
+To modify and test this library, follow these steps:
+```sh
+# Clone the repository
+git clone https://github.com/yourusername/rcache-live.git
+cd rcache-live
+
+# Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Running Tests
+Since test cases are not included in the repo, developers should create their own `tests/` folder and include the following test cases:
+```python
+import pytest
+import time
+from rcache_live.redis_cache import RedisCache
+
+@pytest.fixture
+def cache():
+    return RedisCache(active_ttl=True)
+
+def test_set_and_get_record(cache):
+    cache["test_key"] = {"name": "Alice"}
+    assert cache["test_key"] == {"name": "Alice"}
+
+def test_update_record(cache):
+    cache["test_key"] = {"name": "Alice"}
+    cache.update("test_key", age=30)
+    assert cache["test_key"] == {"name": "Alice", "age": 30}
+
+def test_bulk_set_and_delete(cache):
+    cache.add(user1={"name": "Alice"}, user2={"name": "Bob"})
+    assert cache["user1"] == {"name": "Alice"}
+    assert cache["user2"] == {"name": "Bob"}
+    cache.bulk_delete(["user1", "user2"])
+    assert cache.get_record("user1") is None
+    assert cache.get_record("user2") is None
+```
+To run the tests:
+```sh
+pytest tests/
+```
+
+## Configuration
+You can configure Redis settings using environment variables:
+```sh
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
+export REDIS_DB=0
+export REDIS_PASSWORD=yourpassword
+export REDIS_DEFAULT_TTL=3600
+export REDIS_ACTIVE_TTL=true
+```
+
 ## Contributing
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
