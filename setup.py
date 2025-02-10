@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="rcache-live",
-    version="0.2.2",
+    version="0.2.3",
     description="A simple and efficient Redis caching library with Active TTL support",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your_email@example.com",
-    url="https://github.com/yourusername/rcache-live",
-    packages=find_packages(),  # Automatically finds `rcache_live`
+    author="Shreyans Soni",
+    author_email="sonishreyans01@gmail.com",
+    url="https://github.com/shreyanssoni/rcache_live",
+    packages=find_packages(),
     install_requires=["redis>=4.0.0"],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -21,7 +21,7 @@ setup(
     ],
     python_requires=">=3.6",
      extras_require={
-        "dev": ["pytest", "mockredispy"]  # Dev dependencies for testing
+        "dev": ["pytest", "mockredispy"]
     },
     license="MIT",
     include_package_data=True,

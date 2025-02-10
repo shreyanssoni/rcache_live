@@ -108,6 +108,16 @@ Lazy cleanup ensures that expired or inactive records are removed in an efficien
 cache.cleanup_inactive_records(past_minutes=0.1)
 ```
 
+### Sample Run to see usage
+To test the functionality of `rcache-live`, use the `run_sample.py` file:
+
+Clone the repository and run the following commands:
+```sh
+git clone https://github.com/yourusername/rcache-live.git
+cd rcache-live
+python sample_test.py
+```
+
 ## Developer Guide
 ### Running Tests
 The test cases are included in the repo, developers should run the tests before raising a new pull request
