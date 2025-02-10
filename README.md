@@ -24,13 +24,13 @@ pip install rcache-live
 
 ### Initialize the Cache
 ```python
-from rcache_live.redis_cache import RedisCache
+from rcache_live.rcache_handler import RCacheLive
 
 # Create a Redis cache instance (Active TTL is disabled by default)
-cache = RedisCache()
+cache = RCacheLive()
 
 # Create a Redis cache instance with Active TTL enabled
-cache = RedisCache(active_ttl=True)
+cache = RCacheLive(active_ttl=True)
 ```
 
 ### Set and Get a Record (Dictionary-Style Access)
@@ -82,7 +82,7 @@ Active TTL is a feature that **automatically extends the lifespan of a record** 
 ### Example Usage
 ```python
 # Enable Active TTL when initializing the cache
-cache = RedisCache(active_ttl=True)
+cache = RCacheLive(active_ttl=True)
 
 # Set a record with Active TTL enabled
 cache["session:456"] = {"user": "Alice", "status": "active"}
@@ -110,38 +110,7 @@ cache.cleanup_inactive_records(past_minutes=0.1)
 
 ## Developer Guide
 ### Running Tests
-Since test cases are not included in the repo, developers should create their own `tests/` folder and include the following test cases:
-```python
-import pytest
-import time
-from rcache_live.redis_cache import RedisCache
-
-@pytest.fixture
-def cache():
-    return RedisCache(active_ttl=True)
-
-def test_set_and_get_record(cache):
-    cache["test_key"] = {"name": "Alice"}
-    assert cache["test_key"] == {"name": "Alice"}
-
-def test_update_record(cache):
-    cache["test_key"] = {"name": "Alice"}
-    cache.update("test_key", name="Bob")
-    assert cache["test_key"] == {"name": "Bob"}
-
-def test_bulk_set_and_delete(cache):
-    cache.add(key1={"data": 1}, key2={"data": 2})
-    assert cache["key1"] == {"data": 1}
-    assert cache["key2"] == {"data": 2}
-    cache.bulk_delete(["key1", "key2"])
-    assert cache.get_record("key1") is None
-    assert cache.get_record("key2") is None
-
-def test_lazy_cleanup(cache):
-    cache["old_key"] = {"data": "old"}
-    time.sleep(7)
-    cache.cleanup_inactive_records(past_minutes=0.1)
-    assert cache.get_record("old_key") is None
+The test cases are included in the repo, developers should run the tests before raising a new pull request
 ```
 To run the tests:
 ```sh

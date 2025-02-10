@@ -4,7 +4,7 @@ import time
 from rcache_live.config import RedisConfig
 from rcache_live.utils import serialize, deserialize, current_timestamp
 
-class RedisCache:
+class RCacheLive:
     def __init__(self, host='localhost', port=6379, db=0, password=None, default_ttl=3600, active_ttl=False):
         """
         Initialize Redis Cache with connection settings.
