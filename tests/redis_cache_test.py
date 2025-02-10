@@ -6,7 +6,7 @@ import os
 # Ensure the parent directory is in the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from rcache_live.rcache_handler import RCacheLive
+from rcache_live import RCacheLive
 
 @pytest.fixture
 def cache():
@@ -54,3 +54,26 @@ def test_lazy_cleanup(cache):
     cache.cleanup_inactive_records(past_minutes=0.1)
     print("Checking if key still exists...")
     assert cache.get_record("old_key") is None  # Now it should be deleted
+
+def test_get_nonexistent_record(cache):
+    """Test getting a record that doesn't exist."""
+    try:
+        assert cache.get_record("nonexistent_key") is None
+    except Exception as e:
+        handle_error("test_get_nonexistent_record", e)
+
+def test_delete_nonexistent_record(cache):
+    """Test deleting a nonexistent record (should not raise an error)."""
+    try:
+        cache.delete_record("nonexistent_key")  # Shouldn't break anything
+        assert cache.get_record("nonexistent_key") is None
+    except Exception as e:
+        handle_error("test_delete_nonexistent_record", e)
+
+def test_invalid_update(cache):
+    """Test updating a record that doesn't exist."""
+    try:
+        cache.update("invalid_key", age=30)  # Should create the record
+        assert cache["invalid_key"] == {"age": 30}
+    except Exception as e:
+        handle_error("test_invalid_update", e)

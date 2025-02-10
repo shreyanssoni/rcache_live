@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="rcache-live",
-    version="0.2.0",
+    version="0.2.2",
     description="A simple and efficient Redis caching library with Active TTL support",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -24,7 +24,7 @@ pip install rcache-live
 
 ### Initialize the Cache
 ```python
-from rcache_live.rcache_handler import RCacheLive
+from rcache_live import RCacheLive
 
 # Create a Redis cache instance (Active TTL is disabled by default)
 cache = RCacheLive()
